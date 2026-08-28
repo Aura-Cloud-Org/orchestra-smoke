@@ -1,0 +1,6 @@
+customer_id,first_name,last_name,signup_date,country
+1,Ada,Lovelace,2024-01-15,GB
+2,Grace,Hopper,2024-02-03,US
+3,Alan,Turing,2024-02-20,GB
+4,Katherine,Johnson,2024-03-11,US
+5,Tim,Berners-Lee,2024-04-02,GB

@@ -1,0 +1,44 @@
+version: 2
+
+# Only dbt's four built-in generic tests. No dbt_utils, no custom test macros —
+# a dependency here would reintroduce exactly the failure mode this project
+# exists to stay clear of.
+models:
+  - name: stg_customers
+    description: One row per customer, renamed off the seed.
+    columns:
+      - name: customer_id
+        description: Primary key.
+        tests: [unique, not_null]
+
+  - name: stg_orders
+    description: One row per order.
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
+      - name: customer_id
+        tests:
+          - not_null
+          # Proves the join in customer_order_summary can never drop a row.
+          # dbt 1.12 wants a generic test's inputs under `arguments:`; the old
+          # flat form still works but warns, and a fixture that exists to be
+          # unambiguous should not emit deprecation noise into its own log.
+          - relationships:
+              arguments:
+                to: ref('stg_customers')
+                field: customer_id
+      - name: status
+        tests:
+          - accepted_values:
+              arguments:
+                values: [completed, pending, returned]
+
+  - name: customer_order_summary
+    description: One row per customer, with completed-order totals.
+    columns:
+      - name: customer_id
+        tests: [unique, not_null]
+      - name: lifetime_value
+        # The coalesce is load-bearing: customer 5 has no completed order, and
+        # without it this test fails on a null sum.
+        tests: [not_null]

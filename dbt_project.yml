@@ -1,0 +1,30 @@
+# Orchestra smoke-test project.
+#
+# Deliberately the least interesting dbt project that is still a real one: two
+# seeds, three models, six tests, and NOTHING that can fail for a reason of its
+# own. Its whole job is to answer "is the platform working?", so any failure it
+# reports should be Orchestra's, never dbt's.
+#
+# Specifically absent, each for a reason learned the hard way:
+#   * no packages.yml — a package's `require-dbt-version` is resolved from the
+#     hub at `dbt deps` time, so a project with dependencies can start failing
+#     on a commit that has not changed. That is exactly how run #15 broke.
+#   * no `require-dbt-version` here either, so a runner image upgrade cannot
+#     strand it.
+#   * no sources — a source needs rows already in the warehouse. Seeds carry
+#     their own data, so this project builds against an empty database.
+#   * plain ANSI SQL, no adapter-specific functions, so it runs anywhere.
+name: orchestra_smoke
+version: "1.0.0"
+config-version: 2
+
+# The runner reads this to name the profile it generates (see
+# `read_profile_name` in entrypoint.sh); it does not have to be "orchestra".
+profile: orchestra_smoke
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+
+models:
+  orchestra_smoke:
+    +materialized: table
