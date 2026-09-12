@@ -7,3 +7,4 @@ select
     country,
     cast(signup_date as date) as signed_up_on
 from {{ ref('customers') }}
+-- auradata: pull-request check in the CI environment, merge trigger (NEW-48)
