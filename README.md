@@ -30,3 +30,4 @@ Customer 5 has no completed order on purpose: it is what makes the `not_null`
 test on `lifetime_value` meaningful, since the aggregate is null without the
 `coalesce` and the test catches its removal.
 Check run verification, 2026-09-12.
+Second push, after the clone fix (NEW-43).
